@@ -1,12 +1,21 @@
 import React, { Component } from 'react';
 import { Button } from 'antd';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <Button type="primary">Button</Button>
+        <nav className="navbar navbar-light bg-light">
+          <div className="container">
+            <a className="navbar-brand" href="#">WorldCup 2018</a>
+          </div>
+        </nav>
+
+        <div className="container mt-3">
+          <Button type="primary">Button</Button>
+        </div>
       </div>
     );
   }
