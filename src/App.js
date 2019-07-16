@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button } from 'antd';
+import { Checkbox, Radio } from 'antd';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -14,7 +14,13 @@ class App extends Component {
         </nav>
 
         <div className="container mt-3">
-          <Button type="primary">Button</Button>
+          <Checkbox>顯示紅牌</Checkbox>
+          <Checkbox>顯示黃牌</Checkbox>
+          <Radio.Group defaultValue="{0}">
+            <Radio.Button value="{0}">簡體</Radio.Button>
+            <Radio.Button value="{1}">繁體</Radio.Button>
+            <Radio.Button value="{2}">English</Radio.Button>
+          </Radio.Group>
         </div>
       </div>
     );
