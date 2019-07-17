@@ -2,42 +2,61 @@ import React, { Component } from 'react';
 import { Checkbox, Radio, Table } from 'antd';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
-
-
-const dataSource = [
-  {
-    key: '1',
-    name: '胡彦斌',
-    age: 32,
-    address: '西湖区湖底公园1号',
-  },
-  {
-    key: '2',
-    name: '胡彦祖',
-    age: 42,
-    address: '西湖区湖底公园1号',
-  },
-];
+import reqwest from 'reqwest';
 
 const columns = [
   {
-    title: '姓名',
-    dataIndex: 'name',
-    key: 'name',
+    title: '賽事',
+    dataIndex: 'league[0]',
   },
   {
-    title: '年龄',
-    dataIndex: 'age',
-    key: 'age',
+    title: '時間',
+    dataIndex: 'matchTime',
   },
   {
-    title: '住址',
-    dataIndex: 'address',
-    key: 'address',
+    title: '主隊',
+    dataIndex: 'home[0]',
+  },
+  {
+    title: '全場比分',
+    dataIndex: 'score',
+    render: (value, record) => <span>{record.homeScore} - {record.guestScore}</span>,
+  },
+  {
+    title: '客隊',
+    dataIndex: 'guest[0]',
+  },
+  {
+    title: '半場比分',
+    dataIndex: 'halfScore',
+    render: (value, record) => <span>{record.homeHalfScore} - {record.guestHalfScore}</span>,
+
   },
 ];
 
 class App extends Component {
+  //保存資料
+  state = {
+    data: []
+  };
+
+  fetch = () => {
+    reqwest({
+      url: '/result.json',
+      method: 'get',
+      type: 'json',
+    }).then(data => {
+      this.setState({
+        data: data.results,
+      });
+    });
+  };
+
+  componentDidMount() {
+    this.fetch();
+  }
+
+
   render() {
     return (
       <div className="App">
@@ -58,7 +77,13 @@ class App extends Component {
               <Radio.Button value="{2}">English</Radio.Button>
             </Radio.Group>
           </div>
-          <Table dataSource={dataSource} columns={columns} size="middle" pagination={false} />
+          <Table
+            dataSource={this.state.data}
+            columns={columns}
+            size="middle"
+            pagination={false}
+            rowKey={record=>record.matchId}
+          />
         </div>
       </div>
     );
