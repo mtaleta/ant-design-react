@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Checkbox, Radio, Table, Badge } from 'antd';
+import { Checkbox, Radio, Table, Badge, Menu, Dropdown, Icon, message } from 'antd';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import reqwest from 'reqwest';
@@ -51,6 +51,32 @@ class App extends Component {
       showYellow: e.target.checked
     })
   }
+
+  handleOpeation = (matchId) => {
+    // message.success('This is a prompt', 1);
+    //定位
+    let foundIndex = this.state.data.findIndex(x => x.matchId === matchId)
+    if (foundIndex !== -1) {
+      //message.success(foundIndex,10);
+      let currentMatch = this.state.data[foundIndex]
+      let currentMatchHome = currentMatch.home[this.state.league]
+      let currentMatchGuest = currentMatch.guest[this.state.league]
+      currentMatch.homeScore++;
+
+      let msg = <span>
+        <b class="text-danger">
+          {currentMatchHome} {currentMatch.homeScore}
+        </b>
+        : {currentMatch.guestScore}{currentMatchGuest}
+      </span>
+
+      this.setState({
+        data: this.state.data
+      })
+      message.success(msg)
+    }
+  }
+
   render() {
     const columns = [
       {
@@ -92,6 +118,25 @@ class App extends Component {
         title: '半場比分',
         dataIndex: 'halfScore',
         render: (value, record) => <span>{record.homeHalfScore} - {record.guestHalfScore}</span>,
+
+      },
+      {
+        title: 'local模擬',
+        dataIndex: 'mock',
+        render: (value, record) =>
+          <Dropdown overlay={
+            <Menu>
+              <Menu.Item key="0">
+                <a onClick={e => this.handleOpeation(record.matchId)}>主隊進球 +1</a>
+              </Menu.Item>
+              <Menu.Divider />
+              <Menu.Item key="3">3rd menu item</Menu.Item>
+            </Menu>
+          } trigger={['click']}>
+            <a className="ant-dropdown-link">
+              模擬 <Icon type="down" />
+            </a>
+          </Dropdown>,
 
       },
     ];
