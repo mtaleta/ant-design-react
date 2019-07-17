@@ -12,6 +12,7 @@ const columns = [
   {
     title: '時間',
     dataIndex: 'matchTime',
+    render: (value, record) => <span title={record.matchYear + "-" + record.matchDate + " " + record.matchTime}> {record.matchDate + " " + record.matchTime}</span>,
   },
   {
     title: '主隊',
@@ -37,10 +38,12 @@ const columns = [
 class App extends Component {
   //保存資料
   state = {
-    data: []
+    data: [],
+    loading: false,
   };
 
   fetch = () => {
+    this.setState({loading:true})
     reqwest({
       url: '/result.json',
       method: 'get',
@@ -48,6 +51,7 @@ class App extends Component {
     }).then(data => {
       this.setState({
         data: data.results,
+        loading: false
       });
     });
   };
@@ -82,7 +86,8 @@ class App extends Component {
             columns={columns}
             size="middle"
             pagination={false}
-            rowKey={record=>record.matchId}
+            rowKey={record => record.matchId}
+            loading={this.state.loading}
           />
         </div>
       </div>
