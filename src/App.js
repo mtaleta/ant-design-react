@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Checkbox, Radio, Table } from 'antd';
+import { Checkbox, Radio, Table, Badge } from 'antd';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import reqwest from 'reqwest';
@@ -12,6 +12,8 @@ class App extends Component {
     data: [],
     loading: false,
     league: 0,
+    showRed: true,
+    showYellow: true
   };
 
   fetch = () => {
@@ -37,6 +39,18 @@ class App extends Component {
       league: e.target.value
     })
   }
+
+  handleShowRedChange = (e) => {
+    this.setState({
+      showRed: e.target.checked
+    })
+  }
+
+  handleShowYellowChange = (e) => {
+    this.setState({
+      showYellow: e.target.checked
+    })
+  }
   render() {
     const columns = [
       {
@@ -52,8 +66,12 @@ class App extends Component {
       {
         title: '主隊',
         dataIndex: 'home',
-        render: home => <span>{home[this.state.league]}</span>
-
+        render: (home, record) =>
+          <div>
+            <Badge className="mr-1" count={record.homeYellow} style={{ display: this.state.showYellow ? 'block' : 'none', borderRadius: 0, backgroundColor: 'yellow', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset' }} />
+            <Badge className="mr-1" count={record.homeRed} style={{ display: this.state.showRed ? 'block' : 'none', borderRadius: 0, backgroundColor: 'red', color: '#fff', boxShadow: '0 0 0 1px #d9d9d9 inset' }} />
+            <span>{home[this.state.league]}</span>
+          </div>
       },
       {
         title: '全場比分',
@@ -63,8 +81,12 @@ class App extends Component {
       {
         title: '客隊',
         dataIndex: 'guest',
-        render: guest => <span>{guest[this.state.league]}</span>
-
+        render: (guest, record) =>
+          <div>
+            <span>{guest[this.state.league]}</span>
+            <Badge className="ml-1" count={record.guestYellow} style={{ display: this.state.showYellow ? 'block' : 'none', borderRadius: 0, backgroundColor: 'yellow', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset' }} />
+            <Badge className="ml-1" count={record.guestRed} style={{ display: this.state.showRed ? 'block' : 'none', borderRadius: 0, backgroundColor: 'red', color: '#fff', boxShadow: '0 0 0 1px #d9d9d9 inset' }} />
+          </div>
       },
       {
         title: '半場比分',
@@ -83,8 +105,8 @@ class App extends Component {
 
         <div className="container mt-3">
           <div className="filter my-3">
-            <Checkbox>顯示紅牌</Checkbox>
-            <Checkbox>顯示黃牌</Checkbox>
+            <Checkbox checked={this.state.showRed} onChange={this.handleShowRedChange}>顯示紅牌</Checkbox>
+            <Checkbox checked={this.state.showYellow} onChange={this.handleShowYellowChange}>顯示黃牌</Checkbox>
 
             <Radio.Group defaultValue={this.state.league} onChange={this.handleLangChange}>
               <Radio.Button value={0}>簡體</Radio.Button>
