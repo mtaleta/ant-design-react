@@ -52,28 +52,58 @@ class App extends Component {
     })
   }
 
-  handleOpeation = (matchId) => {
-    // message.success('This is a prompt', 1);
+  handleOpeation = (type, matchId) => {
     //定位
     let foundIndex = this.state.data.findIndex(x => x.matchId === matchId)
     if (foundIndex !== -1) {
-      //message.success(foundIndex,10);
       let currentMatch = this.state.data[foundIndex]
       let currentMatchHome = currentMatch.home[this.state.league]
       let currentMatchGuest = currentMatch.guest[this.state.league]
-      currentMatch.homeScore++;
+      let msg = ''
+      switch (type) {
+        case 'homeScore':
+          currentMatch.homeScore++;
+          msg = <span>
+            <b class="text-danger">
+              {currentMatchHome} {currentMatch.homeScore}
+            </b>
+            : {currentMatch.guestScore}{currentMatchGuest}
+          </span>
+          message.success(msg, 5)
+          break;
+        case 'homeRed':
+          currentMatch.homeRed++;
+          break;
+        case 'homeYellow':
+          currentMatch.homeYellow++;
+          break;
+        case 'guestScore':
+          currentMatch.guestScore++;
+          msg = <span>
+            {currentMatchHome} {currentMatch.homeScore} :
+                <b class="text-danger">
+              {currentMatch.guestScore}{currentMatchGuest}
+            </b>
+          </span>
+          message.success(msg, 5)
+          break;
+        case 'guestRed':
+          currentMatch.guestRed++;
+          break;
+        case 'guestYellow':
+          currentMatch.guestYellow++;
+          break;
+        default:
+          break;
+      }
 
-      let msg = <span>
-        <b class="text-danger">
-          {currentMatchHome} {currentMatch.homeScore}
-        </b>
-        : {currentMatch.guestScore}{currentMatchGuest}
-      </span>
+
+
 
       this.setState({
         data: this.state.data
       })
-      message.success(msg)
+
     }
   }
 
@@ -87,11 +117,13 @@ class App extends Component {
       {
         title: '時間',
         dataIndex: 'matchTime',
+        align: 'center',
         render: (value, record) => <span title={record.matchYear + "-" + record.matchDate + " " + record.matchTime}> {record.matchDate + " " + record.matchTime}</span>,
       },
       {
         title: '主隊',
         dataIndex: 'home',
+        align: 'center',
         render: (home, record) =>
           <div>
             <Badge className="mr-1" count={record.homeYellow} style={{ display: this.state.showYellow ? 'block' : 'none', borderRadius: 0, backgroundColor: 'yellow', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset' }} />
@@ -102,11 +134,13 @@ class App extends Component {
       {
         title: '全場比分',
         dataIndex: 'score',
+        align: 'center',
         render: (value, record) => <span>{record.homeScore} - {record.guestScore}</span>,
       },
       {
         title: '客隊',
         dataIndex: 'guest',
+        align: 'center',
         render: (guest, record) =>
           <div>
             <span>{guest[this.state.league]}</span>
@@ -117,20 +151,36 @@ class App extends Component {
       {
         title: '半場比分',
         dataIndex: 'halfScore',
+        align: 'center',
         render: (value, record) => <span>{record.homeHalfScore} - {record.guestHalfScore}</span>,
 
       },
       {
         title: 'local模擬',
         dataIndex: 'mock',
+        align: 'right',
         render: (value, record) =>
           <Dropdown overlay={
             <Menu>
               <Menu.Item key="0">
-                <a onClick={e => this.handleOpeation(record.matchId)}>主隊進球 +1</a>
+                <a onClick={e => this.handleOpeation('homeScore', record.matchId)}>主隊進球 +1</a>
+              </Menu.Item>
+              <Menu.Item key="0">
+                <a onClick={e => this.handleOpeation('homeRed', record.matchId)}>主隊紅牌 +1</a>
+              </Menu.Item>
+              <Menu.Item key="0">
+                <a onClick={e => this.handleOpeation('homeYellow', record.matchId)}>主隊黃牌 +1</a>
               </Menu.Item>
               <Menu.Divider />
-              <Menu.Item key="3">3rd menu item</Menu.Item>
+              <Menu.Item key="1">
+                <a onClick={e => this.handleOpeation('guestScore', record.matchId)}>客隊進球 +1</a>
+              </Menu.Item>
+              <Menu.Item key="1">
+                <a onClick={e => this.handleOpeation('guestRed', record.matchId)}>客隊紅牌 +1</a>
+              </Menu.Item>
+              <Menu.Item key="1">
+                <a onClick={e => this.handleOpeation('guestYellow', record.matchId)}>客隊黃牌 +1</a>
+              </Menu.Item>
             </Menu>
           } trigger={['click']}>
             <a className="ant-dropdown-link">
